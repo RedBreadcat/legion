@@ -208,6 +208,8 @@ impl Error {
             Error::InvalidKey(span) => *span,
             Error::InvalidOptionArgument(span, _) => *span,
             Error::InvalidArgument(span) => *span,
+            Error::ExpectedComponentType(span) => *span,
+            Error::ExpectedFilterExpression(span) => *span,
             _ => Span::call_site(),
         }
     }
@@ -270,7 +272,7 @@ impl SystemAttr {
                 }
                 Self::new(n, s)
             }
-            Meta::NameValue(name_value) => match name_value.path.get_ident().map(|ident| ident) {
+            Meta::NameValue(name_value) => match name_value.path.get_ident() {
                 Some(ident) if ident == "ctor" => Self::new(Some(name_value.lit.clone()), None),
                 Some(ident) => return Err(Error::InvalidKey(ident.span())),
                 _ => return Err(Error::InvalidKey(Span::call_site())),
